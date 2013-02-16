@@ -1,0 +1,35 @@
+    # Contributor: raven_cler ravencler@gmail.com
+    pkgname=honneur
+    pkgver=0.1
+    pkgrel=1
+    pkgdesc="This is a dialog script for easy create and configurate live medium with ArchIso."
+    arch=('any')
+    url="https://github.com/cler/honneur"
+    _gitcommit=master
+    license=('GPL-3')
+    depends=('bash' 'dialog' 'archiso' 'squashfs-tools')
+    makedepends=('git')
+     
+    build() {
+      local _gitrepo="$pkgname"
+      local _gitroot=git://github.com/cler/"$pkgname".git
+      cd "$startdir"/pkg/
+      mkdir -p usr/local/bin usr/local/lib/honneur usr/local/lib/honneur/files
+      cd "${srcdir}"
+      if [ -d $_gitrepo ] ; then
+        cd $_gitrepo
+        git fetch origin || return 1
+        git reset --hard origin/master || return 1
+        msg "The local files are updated."
+      else
+        # --depth=1 should only be used when no merge is done
+        git clone --depth=1 "${_gitroot}" $_gitrepo || return 1
+      fi
+      cd "${srcdir}/$_gitrepo"
+      install -D -m755 $pkgname "$startdir"/pkg/usr/local/bin
+      install -D -m755 lib/h* "$startdir"/pkg/usr/local/lib/honneur/
+      install -m755 files/* "$startdir"/pkg/usr/local/lib/honneur/files/
+     
+    }
+     
+    # vim:set ts=2 sw=2 et:
